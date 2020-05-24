@@ -8,6 +8,7 @@ import math
 import lilylib as ly
 import warnings
 import utilities
+from pprint import pprint
 
 from rational import Rational
 
@@ -897,7 +898,7 @@ class Lyrics:
         lstr = "\lyricmode {\set ignoreMelismata = ##t"
         for l in self.lyrics_syllables:
             lstr += l
-        #lstr += "\n}"
+        # lstr += "\n}"
         return lstr
 
 
@@ -1251,9 +1252,9 @@ class BeamEvent (SpanEvent):
 
 class PedalEvent (SpanEvent):
     def ly_expression(self):
-        return {-1: '',
-                0: '',
-                1: ''}.get(self.span_direction, '')
+        return {-1: '\\sustainOn',
+                0: '\\sustainOff\\sustainOn',
+                1: '\\sustainOff'}.get(self.span_direction, '')
 
 
 class TextSpannerEvent (SpanEvent):
@@ -1904,7 +1905,7 @@ class SkipEvent (RhythmicEvent):
 class NoteEvent(RhythmicEvent):
     def __init__(self):
         RhythmicEvent.__init__(self)
-        #self.pitch = None
+        # self.pitch = None
         self.cautionary = False
         self.forced_accidental = False
 
@@ -2514,14 +2515,14 @@ The next line contains a bug: The voices might not appear in numerical order! So
                             (figuredbass, figuredbass))
             printer('>>')
             # printer.dump ("test") #prints test after each definition of a context.
-            #printer.newline ()
+            # printer.newline ()
         # printer.dump ("test") #prints test after each definition of a context.
 
     def print_ly(self, printer):
         if self.part_information and len(self.part_information) > 1:
             self.stafftype = "PianoStaff"
             self.substafftype = "Staff"
-            #printer.dump ('test')
+            # printer.dump ('test')
         StaffGroup.print_ly(self, printer)
 
 

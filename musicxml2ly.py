@@ -18,6 +18,7 @@ import zipfile
 import tempfile
 import io
 import warnings
+from pprint import pprint
 from functools import reduce
 
 
@@ -1050,6 +1051,19 @@ def musicxml_spanner_to_lily_event(mxl_event):
     ev = None
 
     name = mxl_event.get_name()
+    if "dashes" in name and options.no_trills:
+        return None
+    elif "pedal" in name and options.no_pedals:
+        return None
+    elif "wedge" in name and options.no_wedges:
+        return None
+    elif "slur" in name and options.no_slurs:
+        return None
+    elif "octave-shift" in name and options.no_octave_shift:
+        return None
+    else:
+        ly.warning(_('Spanner: %s') % pprint(name))
+
     func = spanner_event_dict.get(name)
     if func:
         ev = func()
@@ -3035,6 +3049,36 @@ information.""") % 'lilypond')
                  default=False,
                  dest="no_grace_notes",
                  help=_("disable grace notes in songs that cause problematic Lilypond conversions"))
+
+    p.add_option('--nt', '--no-trills',
+                 action="store_true",
+                 default=False,
+                 dest="no_trills",
+                 help=_("remove all trill marks and wavy lines"))
+
+    p.add_option('--np', '--no-pedals',
+                 action="store_true",
+                 default=False,
+                 dest="no_pedals",
+                 help=_("remove all pedal marks"))
+
+    p.add_option('--nw', '--no-wedges',
+                 action="store_true",
+                 default=False,
+                 dest="no_wedges",
+                 help=_("remove all wedge marks"))
+
+    p.add_option('--ns', '--no-slurs',
+                 action="store_true",
+                 default=False,
+                 dest="no_slurs",
+                 help=_("remove all slurs"))
+
+    p.add_option('--nos', '--no-octave-shift',
+                 action="store_true",
+                 default=False,
+                 dest="no_octave_shifts",
+                 help=_("remove all octave shifts"))
 
     # transpose function
     p.add_option('--transpose',
