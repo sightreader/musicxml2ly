@@ -1059,10 +1059,8 @@ def musicxml_spanner_to_lily_event(mxl_event):
         return None
     elif "slur" in name and options.no_slurs:
         return None
-    elif "octave-shift" in name and options.no_octave_shift:
+    elif "octave-shift" in name and options.no_octave_shifts:
         return None
-    else:
-        ly.warning(_('Spanner: %s') % pprint(name))
 
     func = spanner_event_dict.get(name)
     if func:
@@ -1343,6 +1341,9 @@ def musicxml_articulation_to_lily_event(mxl_event):
 
 
 def musicxml_dynamics_to_lily_event(dynentry):
+    if options.no_dynamics:
+        return None
+
     dynamics_available = (
         "ppppp", "pppp", "ppp", "pp", "p", "mp", "mf",
         "f", "ff", "fff", "ffff", "fp", "sf", "sff", "sp", "spp", "sfz", "rfz")
@@ -1424,6 +1425,9 @@ def get_font_size(size):
 
 
 def musicxml_words_to_lily_event(words):
+    if options.no_text:
+        return None
+
     event = musicexp.TextEvent()
     text = words.get_text()
     # remove white spaces and line breaks before text
@@ -3079,6 +3083,24 @@ information.""") % 'lilypond')
                  default=False,
                  dest="no_octave_shifts",
                  help=_("remove all octave shifts"))
+
+    p.add_option('--ndyn', '--no-dynamics',
+                 action="store_true",
+                 default=False,
+                 dest="no_dynamics",
+                 help=_("remove all dynamics"))
+
+    p.add_option('--no-text',
+                 action="store_true",
+                 default=False,
+                 dest="no_text",
+                 help=_("remove all text"))
+
+    p.add_option('--no-tied-to-note',
+                 action="store_true",
+                 default=False,
+                 dest="no_tied_to_note",
+                 help=_("hide the tied to note"))
 
     # transpose function
     p.add_option('--transpose',
