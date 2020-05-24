@@ -1317,6 +1317,8 @@ def musicxml_articulation_to_lily_event(mxl_event):
     tmp_tp = articulations_dict.get(mxl_event.get_name())
     if OrnamenthasWavyline(mxl_event):
         return
+    if "accent" == mxl_event.get_name() and options.no_accents:
+        return
     if not tmp_tp:
         return
 
@@ -3106,6 +3108,12 @@ information.""") % 'lilypond')
                  default=False,
                  dest="no_tied_to_note",
                  help=_("hide the tied to note"))
+
+    p.add_option('--no-accents',
+                 action="store_true",
+                 default=False,
+                 dest="no_accents",
+                 help=_("hide all accents"))
 
     # transpose function
     p.add_option('--transpose',
