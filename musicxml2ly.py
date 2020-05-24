@@ -2527,7 +2527,6 @@ def musicxml_voice_to_lily_voice(voice):
         # For grace notes:
         grace = n.get_maybe_exist_typed_child(musicxml.Grace)
         if n.is_grace():
-            ly.error(_('options: %s') % options)
             if options.no_grace_notes:
                 continue
             is_after_grace = ev_chord.has_elements() or n.is_after_grace()

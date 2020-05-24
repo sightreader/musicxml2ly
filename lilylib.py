@@ -26,12 +26,12 @@ import sys
 import optparse
 import time
 import codecs
-sys.stdin = codecs.getreader ('utf8') (sys.stdin.detach ())
-sys.stdout = codecs.getwriter ('utf8') (sys.stdout.detach ())
-sys.stderr = codecs.getwriter ('utf8') (sys.stderr.detach ())
+sys.stdin = codecs.getreader('utf8')(sys.stdin.detach())
+sys.stdout = codecs.getwriter('utf8')(sys.stdout.detach())
+sys.stderr = codecs.getwriter('utf8')(sys.stderr.detach())
 
 # Lilylib globals.
-program_name = os.path.basename (sys.argv[0])
+program_name = os.path.basename(sys.argv[0])
 
 # Logging framework: We have the following output functions:
 #    error
@@ -39,60 +39,70 @@ program_name = os.path.basename (sys.argv[0])
 #    progress
 #    debug
 
-loglevels = {"NONE":0, "ERROR":1, "WARN":2, "BASIC":3, "PROGRESS":4, "INFO":5, "DEBUG":6}
+loglevels = {"NONE": 0, "ERROR": 1, "WARN": 2,
+             "BASIC": 3, "PROGRESS": 4, "INFO": 5, "DEBUG": 6}
 
 loglevel = loglevels["PROGRESS"]
 
-def set_loglevel (l):
+
+def set_loglevel(l):
     global loglevel
-    newlevel = loglevels.get (l, -1)
+    newlevel = loglevels.get(l, -1)
     if newlevel > 0:
-        debug_output (_ ("Setting loglevel to %s") % l)
+        debug_output(_("Setting loglevel to %s") % l)
         loglevel = newlevel
     else:
-        error (_ ("Unknown or invalid loglevel '%s'") % l)
+        error(_("Unknown or invalid loglevel '%s'") % l)
 
 
-def handle_loglevel_option (option, opt_str, value, parser, *args):
+def handle_loglevel_option(option, opt_str, value, parser, *args):
     if value:
-        set_loglevel (value);
+        set_loglevel(value)
     elif args:
-        set_loglevel (args[0]);
+        set_loglevel(args[0])
 
-def is_loglevel (l):
+
+def is_loglevel(l):
     global loglevel
-    return loglevel >= loglevels[l];
+    return loglevel >= loglevels[l]
 
-def is_verbose ():
-    return is_loglevel ("DEBUG")
 
-def stderr_write (s):
-    sys.stderr.write (s)
+def is_verbose():
+    return is_loglevel("DEBUG")
 
-def print_logmessage (level, s, fullmessage = True, newline = True):
-    if (is_loglevel (level)):
+
+def stderr_write(s):
+    sys.stderr.write(s)
+
+
+def print_logmessage(level, s, fullmessage=True, newline=True):
+    if (is_loglevel(level)):
         if fullmessage:
-            stderr_write (program_name + ": " + s + '\n')
+            stderr_write(program_name + ": " + s + '\n')
         elif newline:
-            stderr_write (s + '\n')
+            stderr_write(s + '\n')
         else:
-            stderr_write (s)
+            stderr_write(s)
 
-def error (s):
-    print_logmessage ("ERROR", _ ("error: %s") % s);
 
-def warning (s):
-    print_logmessage ("WARN", _ ("warning: %s") % s);
+def error(s):
+    print_logmessage("ERROR", _("error: %s") % s)
 
-def basic_progress (s):
-    print_logmessage ("BASIC", s);
 
-def progress (s, fullmessage = False, newline = True):
-    print_logmessage ("PROGRESS", s, fullmessage, newline);
+def warning(s):
+    print_logmessage("WARN", _("warning: %s") % s)
 
-def debug_output (s, fullmessage = False, newline = True):
-    print_logmessage ("DEBUG", s, fullmessage, newline);
 
+def basic_progress(s):
+    print_logmessage("BASIC", s)
+
+
+def progress(s, fullmessage=False, newline=True):
+    print_logmessage("PROGRESS", s, fullmessage, newline)
+
+
+def debug_output(s, fullmessage=False, newline=True):
+    print_logmessage("DEBUG", s, fullmessage, newline)
 
 
 # A modified version of the commands.mkarg(x) that always uses
@@ -109,32 +119,34 @@ def mkarg(x):
     s = s + '"'
     return s
 
-def command_name (cmd):
+
+def command_name(cmd):
     # Strip all stuf after command,
     # deal with "((latex ) >& 1 ) .." too
-    cmd = re.match ('([\(\)]*)([^\\\ ]*)', cmd).group (2)
-    return os.path.basename (cmd)
+    cmd = re.match('([\(\)]*)([^\\\ ]*)', cmd).group(2)
+    return os.path.basename(cmd)
 
-def subprocess_system (cmd,
-                       ignore_error=False,
-                       progress_p=True,
-                       be_verbose=False,
-                       redirect_output=False,
-                       log_file=None):
+
+def subprocess_system(cmd,
+                      ignore_error=False,
+                      progress_p=True,
+                      be_verbose=False,
+                      redirect_output=False,
+                      log_file=None):
     import subprocess
 
-    show_progress= progress_p
-    name = command_name (cmd)
+    show_progress = progress_p
+    name = command_name(cmd)
     error_log_file = ''
 
     if redirect_output:
-        progress (_ ("Processing %s.ly") % log_file)
+        progress(_("Processing %s.ly") % log_file)
     else:
         if be_verbose:
             show_progress = 1
-            progress (_ ("Invoking `%s\'") % cmd)
+            progress(_("Invoking `%s\'") % cmd)
         else:
-            progress ( _("Running %s...") % name)
+            progress(_("Running %s...") % name)
 
     stdout_setting = None
     stderr_setting = None
@@ -145,16 +157,16 @@ def subprocess_system (cmd,
         stderr_filename = log_file + '.log'
         stderr_setting = open(stderr_filename, 'w')
 
-    proc = subprocess.Popen (cmd,
-                             shell=True,
-                             universal_newlines=True,
-                             stdout=stdout_setting,
-                             stderr=stderr_setting)
+    proc = subprocess.Popen(cmd,
+                            shell=True,
+                            universal_newlines=True,
+                            stdout=stdout_setting,
+                            stderr=stderr_setting)
 
     log = ''
 
     if redirect_output:
-        while proc.poll()==None:
+        while proc.poll() == None:
             time.sleep(0.01)
         retval = proc.returncode
         stderr_setting.close()
@@ -162,7 +174,7 @@ def subprocess_system (cmd,
         if show_progress:
             retval = proc.wait()
         else:
-            log = proc.communicate ()
+            log = proc.communicate()
             retval = proc.returncode
 
     if retval:
@@ -178,26 +190,26 @@ def subprocess_system (cmd,
             if not show_progress:
                 print(log[0])
                 print(log[1])
-            sys.exit (1)
+            sys.exit(1)
 
-    return abs (retval)
-
-def ossystem_system (cmd,
-                     ignore_error=False,
-                     progress_p=True,
-                     be_verbose=False,
-                     redirect_output=False,
-                     log_file=None):
+    return abs(retval)
 
 
-    name = command_name (cmd)
+def ossystem_system(cmd,
+                    ignore_error=False,
+                    progress_p=True,
+                    be_verbose=False,
+                    redirect_output=False,
+                    log_file=None):
+
+    name = command_name(cmd)
     if be_verbose:
         show_progress = 1
-        progress (_ ("Invoking `%s\'") % cmd)
+        progress(_("Invoking `%s\'") % cmd)
     else:
-        progress ( _("Running %s...") % name)
+        progress(_("Running %s...") % name)
 
-    retval = os.system (cmd)
+    retval = os.system(cmd)
     if retval:
         print('command failed:', cmd, file=sys.stderr)
         if retval < 0:
@@ -208,43 +220,46 @@ def ossystem_system (cmd,
         if ignore_error:
             print("Error ignored", file=sys.stderr)
         else:
-            sys.exit (1)
+            sys.exit(1)
 
-    return abs (retval)
+    return abs(retval)
 
 
 system = subprocess_system
 if sys.platform == 'mingw32':
 
-    ## subprocess x-compile doesn't work.
+    # subprocess x-compile doesn't work.
     system = ossystem_system
 
-def strip_extension (f, ext):
-    (p, e) = os.path.splitext (f)
+
+def strip_extension(f, ext):
+    (p, e) = os.path.splitext(f)
     if e == ext:
         e = ''
     return p + e
 
 
-def search_exe_path (name):
+def search_exe_path(name):
     p = os.environ['PATH']
-    exe_paths = p.split (':')
+    exe_paths = p.split(':')
     for e in exe_paths:
-        full = os.path.join (e, name)
-        if os.path.exists (full):
+        full = os.path.join(e, name)
+        if os.path.exists(full):
             return full
     return None
 
 
-def print_environment ():
-    for (k,v) in list(os.environ.items ()):
-        sys.stderr.write ("%s=\"%s\"\n" % (k, v))
+def print_environment():
+    for (k, v) in list(os.environ.items()):
+        sys.stderr.write("%s=\"%s\"\n" % (k, v))
+
 
 class NonDentedHeadingFormatter (optparse.IndentedHelpFormatter):
     def format_heading(self, heading):
         if heading:
             return heading[0].upper() + heading[1:] + ':\n'
         return ''
+
     def format_option_strings(self, option):
         sep = ' '
         if option._short_opts and option._long_opts:
@@ -254,9 +269,9 @@ class NonDentedHeadingFormatter (optparse.IndentedHelpFormatter):
         if option.takes_value():
             metavar = '=%s' % option.metavar or option.dest.upper()
 
-        return "%3s%s %s%s" % (" ".join (option._short_opts),
+        return "%3s%s %s%s" % (" ".join(option._short_opts),
                                sep,
-                               " ".join (option._long_opts),
+                               " ".join(option._long_opts),
                                metavar)
 
     # Only use one level of indentation (even for groups and nested groups),
@@ -264,11 +279,12 @@ class NonDentedHeadingFormatter (optparse.IndentedHelpFormatter):
     def indent(self):
         self.current_indent = self.indent_increment
         self.level += 1
+
     def dedent(self):
         self.level -= 1
         if self.level <= 0:
             self.current_indent = ''
-            self.level = 0;
+            self.level = 0
 
     def format_usage(self, usage):
         return _("Usage: %s") % usage + '\n'
@@ -276,15 +292,17 @@ class NonDentedHeadingFormatter (optparse.IndentedHelpFormatter):
     def format_description(self, description):
         return description
 
+
 class NonEmptyOptionParser (optparse.OptionParser):
     "A subclass of OptionParser that gobbles empty string arguments."
 
-    def parse_args (self, args=None, values=None):
-        options, args = optparse.OptionParser.parse_args (self, args, values)
+    def parse_args(self, args=None, values=None):
+        options, args = optparse.OptionParser.parse_args(self, args, values)
         return options, [_f for _f in args if _f]
 
-def get_option_parser (*args, **kwargs):
-    p = NonEmptyOptionParser (*args, **kwargs)
-    p.formatter = NonDentedHeadingFormatter ()
-    p.formatter.set_parser (p)
+
+def get_option_parser(*args, **kwargs):
+    p = NonEmptyOptionParser(*args, **kwargs)
+    p.formatter = NonDentedHeadingFormatter()
+    p.formatter.set_parser(p)
     return p
