@@ -758,7 +758,6 @@ def musicxml_tuplet_to_lily(tuplet_elt, time_modification):
 
 
 def group_tuplets(music_list, events):
-
     """Collect Musics from
     MUSIC_LIST demarcated by EVENTS_LIST in TimeScaledMusic objects.
     """
