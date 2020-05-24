@@ -2578,7 +2578,11 @@ def musicxml_voice_to_lily_voice(voice):
             ev_chord.append(main_event)
             ignore_lyrics = True
         else:
-            ev_chord.append(main_event)
+            if options.no_tied_to_note:
+                if not is_tied or tie_started:
+                    ev_chord.append(main_event)
+            else:
+                ev_chord.append(main_event)
             # When a note/chord has grace notes (duration==0), the duration of the
             # event chord is not yet known, but the event chord was already added
             # with duration 0. The following correct this when we hit the real note!
@@ -2679,7 +2683,8 @@ def musicxml_voice_to_lily_voice(voice):
             if not grace:
                 mxl_tie = notations.get_tie()
                 if mxl_tie and mxl_tie.type == 'start':
-                    ev_chord.append(musicexp.TieEvent())
+                    if not options.no_tied_to_note:
+                        ev_chord.append(musicexp.TieEvent())
                     is_tied = True
                     tie_started = True
                 else:
