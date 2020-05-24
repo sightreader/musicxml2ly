@@ -21431,7 +21431,7 @@
       <direction placement="below">
         <direction-type>
           <dynamics default-x="3.29" default-y="-40.00" relative-y="-40.00">
-            <other-dynamics>sempre </other-dynamics>
+            <other-dynamics>sempre</other-dynamics>
             </dynamics>
           </direction-type>
         <staff>1</staff>

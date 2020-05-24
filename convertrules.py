@@ -2465,8 +2465,8 @@ def conv (str):
 @rule ((2, 9, 13), "instrument -> instrumentName, instr -> shortInstrumentName, vocNam -> shortVocalName")
 def conv (str):
     str = re.sub ('vocNam', 'shortVocalName', str)
-    str = re.sub (r'\.instr\s*=', r'.shortInstrumentName =', str)
-    str = re.sub (r'\.instrument\s*=', r'.instrumentName =', str)
+    # str = re.sub (r'\.instr\s*=', r'.shortInstrumentName =', str)
+    # str = re.sub (r'\.instrument\s*=', r'.instrumentName =', str)
     return str
 
 

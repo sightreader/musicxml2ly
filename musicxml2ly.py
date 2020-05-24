@@ -2527,6 +2527,9 @@ def musicxml_voice_to_lily_voice(voice):
         # For grace notes:
         grace = n.get_maybe_exist_typed_child(musicxml.Grace)
         if n.is_grace():
+            ly.error(_('options: %s') % options)
+            if options.no_grace_notes:
+                continue
             is_after_grace = ev_chord.has_elements() or n.is_after_grace()
             is_chord = n.get_maybe_exist_typed_child(musicxml.Chord)
 
@@ -3028,6 +3031,12 @@ information.""") % 'lilypond')
                  dest="midi",
                  help=_("activate midi-block in .ly file"))
 
+    p.add_option('--ng', '--no-grace-notes',
+                 action="store_true",
+                 default=False,
+                 dest="no_grace_notes",
+                 help=_("disable grace notes in songs that cause problematic Lilypond conversions"))
+
     # transpose function
     p.add_option('--transpose',
                  metavar=_("TOPITCH"),
@@ -3216,9 +3225,9 @@ def print_ly_additional_definitions(printer, filename=None):
         printer.newline()
     for a in set(needed_additional_definitions):
         additional_definition = additional_definitions.get(a, '')
-        if 'make-dynamic-script' not in additional_definition:
-            printer.print_verbatim(additional_definition)
-            printer.newline()
+        # if 'make-dynamic-script' not in additional_definition:
+        printer.print_verbatim(additional_definition)
+        printer.newline()
     printer.newline()
 
 # Read in the tree from the given I/O object (either file or string) and

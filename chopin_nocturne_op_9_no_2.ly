@@ -2,7 +2,11 @@
 % Automatically converted by musicxml2ly
 \pointAndClickOff
 
+\include "articulate.ly"
+
 %% additional definitions required by the score:
+fz = #(make-dynamic-script "fz")
+sempre = #(make-dynamic-script "sempre")
 
 \header {
     title =  "Nocturne Op.9.No.2"
@@ -81,7 +85,7 @@ PartPOneVoiceOne =  \relative bes' {
     es4. ( -\p f8 es8 f8 g2. ) | % 26
     es4. ~ -\pp es16 ( f16 es16 ) f16 ( es16 f16 g4 ) -\markup{ \italic
         {poco rubato} } es8 ( \reverseturn es'8 ) ( -. d8 -. c8 ) -. | % 27
-    bes4 ( -\sempre  a8 as8 ) c,8 d8 es8 f16 ( es16 \prall d16 es16 )
+    bes4 ( -\sempre a8 as8 ) c,8 d8 es8 f16 ( es16 \prall d16 es16 )
     \acciaccatura { es8 ( } {} g'8 ) f16 ( -. es16 -. d16 -. c16 -. | % 28
     ces8 bes8 beses8 ) beses16 ( as16 ) as16 ( g16 ) g16. ( f32 es2. )
     -> | % 29
@@ -227,8 +231,6 @@ PartPOneVoiceSix =  \relative f {
         
         \new PianoStaff
         <<
-            \set PianoStaff.instrumentName = "Piano"
-            \set PianoStaff.shortInstrumentName = "Pno."
             
             \context Staff = "1" << 
                 \mergeDifferentlyDottedOn\mergeDifferentlyHeadedOn
@@ -243,7 +245,25 @@ PartPOneVoiceSix =  \relative f {
         
         >>
     \layout {}
-    % To create MIDI output, uncomment the following line:
-    %  \midi {\tempo 4 = 66 }
+    }
+\score {
+    \unfoldRepeats \articulate {
+        
+        \new PianoStaff
+        <<
+            
+            \context Staff = "1" << 
+                \mergeDifferentlyDottedOn\mergeDifferentlyHeadedOn
+                \context Voice = "PartPOneVoiceOne" {  \voiceOne \PartPOneVoiceOne }
+                \context Voice = "PartPOneVoiceTwo" {  \voiceTwo \PartPOneVoiceTwo }
+                >> \context Staff = "2" <<
+                \mergeDifferentlyDottedOn\mergeDifferentlyHeadedOn
+                \context Voice = "PartPOneVoiceFive" {  \voiceOne \PartPOneVoiceFive }
+                \context Voice = "PartPOneVoiceSix" {  \voiceTwo \PartPOneVoiceSix }
+                >>
+            >>
+        
+        }
+    \midi {\tempo 4 = 66 }
     }
 
