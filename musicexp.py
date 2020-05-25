@@ -105,14 +105,24 @@ class Output_printer(object):
 
         self.unformatted_output(str)
 
-#    def print_note_color (self, object, rgb=None):
-#        if rgb:
-#            str = ("\\once\\override %s.color = #(rgb-color %s # %s %s)" % (object, rgb[0], rgb[1], rgb[2]))
-#        else:
-#            str = "\\revert %s.color" % object
-#            self.newline()
-#            self.add_word(str)
-#            self.newline()
+    def print_invisible_tied_to_note_style(self):
+        str = ("\\once\\hideNotes")
+        self.newline()
+        self.add_word(str)
+        self.newline()
+
+    def print_note_color(self, object, rgb=None):
+        if rgb:
+            str = ("\\once\\override %s.color = #(rgb-color %s %s %s)" %
+                   (object, rgb[0], rgb[1], rgb[2]))
+            self.newline()
+            self.add_word(str)
+            self.newline()
+        else:
+            str = "\\revert %s.color" % object
+            self.newline()
+            self.add_word(str)
+            self.newline()
 
     def add_word(self, str):
         if (len(str) + 1 + len(self._line) > self._line_len):
@@ -1944,6 +1954,8 @@ class NoteEvent(RhythmicEvent):
     def print_ly(self, printer):
         for ev in self.associated_events:
             ev.print_ly(printer)
+        if (hasattr(self, 'hide_tied_to_note')):
+            printer.print_invisible_tied_to_note_style()
         if hasattr(self, 'color'):
             printer.print_note_color("NoteHead", self.color)
             printer.print_note_color("Stem", self.color)
@@ -1954,11 +1966,6 @@ class NoteEvent(RhythmicEvent):
             printer(self.pitch_mods())
 
         self.duration.print_ly(printer)
-
-#        if hasattr(self, 'color'):
-#            printer.print_note_color("NoteHead")
-#            printer.print_note_color("Stem")
-#            printer.print_note_color("Beam")
 
 
 class KeySignatureChange (Music):

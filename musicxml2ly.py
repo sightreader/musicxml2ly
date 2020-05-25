@@ -61,7 +61,7 @@ gettext.install(
     'lilypond', '/usr/local/share/locale')
 
 
-lilypond_version = "2.20"
+lilypond_version = "2.20.0"
 
 # Store command-line options in a global variable, so we can access them everywhere
 options = None
@@ -2580,11 +2580,12 @@ def musicxml_voice_to_lily_voice(voice):
             ev_chord.append(main_event)
             ignore_lyrics = True
         else:
+            ev_chord.append(main_event)
+
             if options.no_tied_to_note:
-                if not is_tied or tie_started:
-                    ev_chord.append(main_event)
-            else:
-                ev_chord.append(main_event)
+                if is_tied and not tie_started:
+                    main_event.hide_tied_to_note = True
+
             # When a note/chord has grace notes (duration==0), the duration of the
             # event chord is not yet known, but the event chord was already added
             # with duration 0. The following correct this when we hit the real note!
