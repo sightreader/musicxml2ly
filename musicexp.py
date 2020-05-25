@@ -2625,28 +2625,23 @@ class Score:
         printer.newline()
         # StaffGroup.print_staffgroup_closing_brackets(self, printer) #TypeError: unbound method print_staffgroup_closing_brackets() must be called with StaffGroup instance as first argument (got Score instance instead)
         # print_staffgroup_closing_brackets(self, printer) #NameError: global name 'print_staffgroup_closing_brackets' is not defined. prints test once before the >> of the score block, independent of the existence of a staffgroup.
-        printer.dump("\\layout {}")
-        printer.newline()
-        # If the --midi option was not passed to musicxml2ly, that comments the "midi" line
-        if self.create_midi:
-            printer.dump("}")
-            printer.newline()
-            printer.dump("\\score {")
-            printer.newline()
-            printer.dump("\\unfoldRepeats \\articulate {")
-            printer.newline()
-            self.contents.print_ly(printer)
-            printer.dump("}")
-            printer.newline()
-        else:
-            printer.dump(
-                "% To create MIDI output, uncomment the following line:")
-            printer.newline()
-            printer.dump("% ")
-        printer.dump("\\midi {\\tempo 4 = "+self.tempo+" }")
-        printer.newline()
-        printer.dump("}")
-        printer.newline()
+        printer.dump("""
+    \layout {
+        \override Staff.BarLine.output-attributes = #(lambda (grob)
+            (list
+                (cons 'id 'barline)
+                (cons 'measure  ( list-ref (grob::rhythmic-location grob) 0) )
+            )
+        )
+        \override NoteHead.output-attributes = #(lambda (grob)
+            (list
+                (cons 'id 'notehead)
+                (cons 'measure  ( list-ref (grob::rhythmic-location grob) 0) )
+            )
+        )
+    }
+}
+                         """)
 
 
 def test_pitch():

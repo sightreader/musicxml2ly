@@ -327,9 +327,10 @@ def extract_score_information(tree):
         elif(type == None):
             pass
         else:
+            pass
             set_if_exists(type, cred.get_text())
 
-    # TODO: Check for other unsupported features
+            # TODO: Check for other unsupported features
     return header
 
 
